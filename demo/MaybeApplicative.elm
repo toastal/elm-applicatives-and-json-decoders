@@ -1,6 +1,6 @@
 module MaybeApplicative exposing (..)
 
-import Html exposing (Html, h1, text)
+import Html exposing (Html, code, div, h1, h2, text)
 import Maybe.Extra as Maybe
 
 
@@ -21,7 +21,13 @@ infixl 2 =>
 
 view : a -> Html String
 view x =
-    h1 [] [ text <| toString x ]
+    div []
+        [ h1 []
+            [ code [] [ text "Just (+) <$> Just 1 <$> Just 2" ]
+            , text " :"
+            ]
+        , h2 [] [ text <| toString x ]
+        ]
 
 
 {-| Same as Just (+) `Maybe.andMap` Just 1 `Maybe.andMap` Just 2
