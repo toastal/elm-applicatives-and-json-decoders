@@ -23,7 +23,7 @@ view : a -> Html String
 view x =
     div []
         [ h1 []
-            [ code [] [ text "Just (+) <$> Just 1 <$> Just 2" ]
+            [ code [] [ text "Just (+) <*> Just 1 <*> Just 2" ]
             , text " :"
             ]
         , h2 [] [ text <| toString x ]
