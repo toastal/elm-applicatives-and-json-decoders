@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/toastal/Elm-Applicatives-and-Json-Decoders.git"
+    "url": "git+https://github.com/toastal/elm-applicative-and-json-decoders.git"
   },
   "author": "younity",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/toastal/Elm-Applicatives-and-Json-Decoders/issues"
+    "url": "https://github.com/toastal/elm-applicative-and-json-decoders/issues"
   },
-  "homepage": "https://github.com/toastal/Elm-Applicatives-and-Json-Decoders#readme",
+  "homepage": "https://github.com/toastal/elm-applicative-and-json-decoders#readme",
   "dependencies": {
     "elm": "^0.17.1"
   }
