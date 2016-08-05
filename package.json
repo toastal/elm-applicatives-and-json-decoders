@@ -1,7 +1,7 @@
 {
-  "name": "applicatives-and-json-decode",
+  "name": "elm-applicatives-and-json-decoders",
   "version": "0.0.1a",
-  "description": "Web client for younity",
+  "description": "Elm Applicatives and Json Decoders",
   "main": "index.js",
   "scripts": {
     "postinstall": "elm package install -y",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/toastal/xxxx.git"
+    "url": "git+https://github.com/toastal/Elm-Applicatives-and-Json-Decoders.git"
   },
   "author": "younity",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/toastal/xxxx/issues"
+    "url": "https://github.com/toastal/Elm-Applicatives-and-Json-Decoders/issues"
   },
-  "homepage": "https://github.com/toastal/xxxx#readme",
+  "homepage": "https://github.com/toastal/Elm-Applicatives-and-Json-Decoders#readme",
   "dependencies": {
     "elm": "^0.17.1"
   }
