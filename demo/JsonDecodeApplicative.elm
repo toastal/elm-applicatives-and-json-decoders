@@ -5,7 +5,7 @@ import Json.Decode as Decode
 import Json.Decode.Extra as Decode exposing ((|:))
 
 
-view : a -> Html
+view : a -> Html String
 view =
     text << toString
 
