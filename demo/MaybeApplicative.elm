@@ -7,15 +7,15 @@ import Maybe.Extra as Maybe
 {-| Infix for Maybe.andMap which is the same as apply
 
 In Haskell:
-(<$>) :: Functor f => (a -> b) -> f a -> f b
+(<*>) :: Applicative f => f (a -> b) -> f a -> f b
 
-Which takes in Functor (because of polymorphism)--not just Maybe
+Which takes in Applicative (because of polymorphism)--not just Maybe
 -}
 infixl 2 =>
 
 
-(<$>) : Maybe (a -> b) -> Maybe a -> Maybe b
-(<$>) =
+(<*>) : Maybe (a -> b) -> Maybe a -> Maybe b
+(<*>) =
     Maybe.andMap
 
 
