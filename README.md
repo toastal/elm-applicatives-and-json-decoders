@@ -175,6 +175,9 @@ scale infinity whereas the applicatives do.
 
 
 ```elm
+import Json.Decode as Decode exposing ((:=))
+
+
 coolItemDecoder : Decoder CoolItem
 coolItemDecoder =
     Decode.succeed CoolItem
@@ -188,5 +191,57 @@ coolItemDecoder =
 So this `:=` infix operator is used to apply the given decoder given
 a string for key JSON object (e.g. "foo" will be decoded as an integer).
 
+So what happens when when apply in our foo decoder?
+
+Well let's look at some types:
+
+```elm
+import Json.Decode as Decode exposing (Decoder, (:=))
+import Json.Docode.Extra as Decode ((|:))
 
 
+baz : Decoder (Int -> Bool -> CoolItem)
+baz =
+  Decode.succeed CoolItem
+
+
+qux : Decoder (Bool -> CoolItem)
+qux =
+  Decode.succeed CoolItem
+    |: ("foo" := Decode.int)
+
+
+-- And the full decoder
+coolItemDecoder : Decoder CoolItem
+coolItemDecoder =
+    Decode.succeed CoolItem
+        |: ("foo" := Decode.int)
+        |: ("bar" := Decode.bool)
+```
+
+
+So all we have to do now is set up our app to decode the JSON
+
+
+```elm
+import Html exposing (Html, text)
+
+
+view : a -> Html String
+view =
+    text << toString
+
+
+main : Html String
+main =
+    coolJson
+        |> Decode.decodeString (Decode.list coolListDecoder)
+        |> view
+```
+
+
+`Decode.decodeString : Decoder a -> String -> Result String a`
+
+`Decode.list : Decoder a -> Decoder (List a)`
+
+But, go look at the demo.
