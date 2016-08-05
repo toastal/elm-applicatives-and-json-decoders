@@ -19,11 +19,18 @@ infixl 2 =>
     Maybe.andMap
 
 
+{-| define the pure/singleton for the our applicative, Maybe
+-}
+singleton : a -> Maybe a
+singleton =
+    Just
+
+
 view : a -> Html String
 view x =
     div []
         [ h1 []
-            [ code [] [ text "Just (+) <*> Just 1 <*> Just 2" ]
+            [ code [] [ text "singleton (+) <*> Just 1 <*> Just 2" ]
             , text " :"
             ]
         , h2 [] [ text <| toString x ]
@@ -34,7 +41,7 @@ view x =
 -}
 main : Html String
 main =
-    view <| Just (+) <$> Just 1 <$> Just 2
+    view <| singleton (+) <*> Just 1 <*> Just 2
 
 
 
