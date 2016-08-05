@@ -1,8 +1,42 @@
 module JsonDecodeApplicative exposing (..)
 
 import Html exposing (Html, text)
-import Json.Decode as Decode
+import Json.Decode as Decode exposing (Decoder, (:=))
 import Json.Decode.Extra as Decode exposing ((|:))
+
+
+coolJson : String
+coolJson =
+    """[
+  {
+    "foo": 0,
+    "bar": true
+  },
+  {
+    "foo": 1,
+    "bar": true
+  },
+  {
+    "foo": 2,
+    "bar": false
+  }
+]
+"""
+
+
+type alias CoolItem =
+    { foo : Int
+    , bar : Bool
+    }
+
+
+{-| Reminder: CoolItem == (Int -> Bool -> CoolItem)
+-}
+coolItemDecoder : Decoder CoolItem
+coolItemDecoder =
+    Decode.succeed CoolItem
+        |: ("foo" := Decode.int)
+        |: ("bar" := Decode.bool)
 
 
 view : a -> Html String
@@ -12,4 +46,6 @@ view =
 
 main : Html String
 main =
-    view <| 20
+    coolJson
+        |> Decode.decodeString (Decode.list coolListDecoder)
+        |> view
