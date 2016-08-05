@@ -129,4 +129,64 @@ Looks pretty pure to me...
 ## So let's apply (heh heh) our knowledge
 
 
+Create some dummy JSON string
+
+
+```elm
+coolJson : String
+coolJson =
+    """[
+  {
+    "foo": 0,
+    "bar": true
+  },
+  {
+    "foo": 1,
+    "bar": true
+  },
+  {
+    "foo": 2,
+    "bar": false
+  }
+]
+"""
+```
+
+
+Create some type alias to represent these cool data items
+
+
+```elm
+type alias CoolItem =
+    { foo : Int
+    , bar : Bool
+    }
+```
+
+
+Let's create a decoder using applicative.
+
+Reminder: the constructor for `CoolItem` is `(Int -> Bool -> CoolItem)`
+
+So, `Decode.succed CoolItem` is `Decoder (Int -> Bool -> CoolItem)`
+
+Also, lets forget `Json.Decode.objectN`s don't exist because they don't
+scale infinity whereas the applicatives do.
+
+
+```elm
+coolItemDecoder : Decoder CoolItem
+coolItemDecoder =
+    Decode.succeed CoolItem
+        |: ("foo" := Decode.int)
+        |: ("bar" := Decode.bool)
+```
+
+
+`(:=) : String -> Decoder a -> Decoder a`
+
+So this `:=` infix operator is used to apply the given decoder given
+a string for key JSON object (e.g. "foo" will be decoded as an integer).
+
+
 
