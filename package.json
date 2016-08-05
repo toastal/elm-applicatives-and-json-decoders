@@ -1,0 +1,23 @@
+{
+  "name": "applicatives-and-json-decode",
+  "version": "0.0.1a",
+  "description": "Web client for younity",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "elm package install -y",
+    "start": "elm-reactor"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toastal/xxxx.git"
+  },
+  "author": "younity",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/toastal/xxxx/issues"
+  },
+  "homepage": "https://github.com/toastal/xxxx#readme",
+  "dependencies": {
+    "elm": "^0.17.1"
+  }
+}
