@@ -4,6 +4,15 @@
 
 - - -
 
+## Setup
+
+```bash
+npm install
+npm start
+```
+
+- - -
+
 
 ## Quick Fly-By at Applicatives
 
