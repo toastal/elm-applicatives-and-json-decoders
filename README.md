@@ -297,3 +297,9 @@ or think about what the `singleton` would be.
 
 In Elm you'll see the term `singleton` for `pure`. ...And most
 of the time you'll see `andMap`, `ap`, or `apply`.
+
+
+- - -
+
+
+So let's see some in action -- see Pokémon example.
