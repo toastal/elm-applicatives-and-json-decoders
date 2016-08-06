@@ -300,4 +300,4 @@ of the time you'll see `andMap`, `ap`, or `apply`.
 - - -
 
 
-So let's see some in action with some real JSON because people want to know about Tasks and Cmds as well -- see [Pokémon example](https://codepen.io/toastal/pen/kXAKPk) `PokemonViewer.elm`.
+So let's see some in action with some real JSON HTTP requests because people want to know about Tasks and Cmds as well -- see [Pokémon example](https://codepen.io/toastal/pen/kXAKPk) `PokemonViewer.elm`.
