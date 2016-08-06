@@ -100,7 +100,7 @@ singleton : a -> Maybe a
 singleton =
     Just
 
-infixl 2 =>
+infixl 2 <*>
 (<*>) : Maybe (a -> b) -> Maybe a -> Maybe b
 (<*>) =
     Maybe.andMap
