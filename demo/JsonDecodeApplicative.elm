@@ -47,5 +47,5 @@ view =
 main : Html String
 main =
     coolJson
-        |> Decode.decodeString (Decode.list coolListDecoder)
+        |> Decode.decodeString (Decode.list coolItemDecoder)
         |> view
