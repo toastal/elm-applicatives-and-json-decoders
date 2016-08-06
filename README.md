@@ -228,7 +228,7 @@ coolItemDecoder =
 `(:=) : String -> Decoder a -> Decoder a`
 
 So this `:=` infix operator is used to apply the given decoder given
-a string for key JSON object (e.g. "foo" will be decoded as an integer).
+a string for a key in a JSON object (e.g. "foo" will be decoded as an integer).
 
 So what happens when when apply in our foo decoder?
 
