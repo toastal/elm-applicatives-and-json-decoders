@@ -11,9 +11,7 @@ In Haskell:
 
 Which takes in Applicative (because of polymorphism)--not just Maybe
 -}
-infixl 2 =>
-
-
+infixl 2 <*>
 (<*>) : Maybe (a -> b) -> Maybe a -> Maybe b
 (<*>) =
     Maybe.andMap
