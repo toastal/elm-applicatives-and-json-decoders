@@ -27,8 +27,8 @@ Maybe.map ((+) 2) (Just 1) == Just 3
 --=> True
 ```
 
-`a` in `Just a` can be a function.
 
+The `a` in `Just a` can also be a function.
 
 So what happens if we had a `Just (+)` with the addition infix
 operator... how do we use this to add in an applicative manner
@@ -208,8 +208,6 @@ type alias CoolItem =
 Let's create a decoder using applicative.
 
 Reminder: the constructor for `CoolItem` is `(Int -> Bool -> CoolItem)`
-
-So, `Decode.succed CoolItem` is `Decoder (Int -> Bool -> CoolItem)`
 
 Also, lets forget `Json.Decode.objectN`s don't exist because they don't
 scale infinity whereas the applicatives do.
