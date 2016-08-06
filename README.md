@@ -44,8 +44,12 @@ Applicatives have 2 properties:
 
 - `apply`, `ap`, `<*>`
 
+
+- - -
+
+
 Pure lets us know how to create a singleton list of for the
-default case of some applicative. Examples:
+default case of some applicative. Examples of Elm singletons:
 
 - `Maybe` - `Just`
 
@@ -161,7 +165,7 @@ succeed : a -> Decoder a
 ```
 
 
-Looks pretty pure to me...
+Looks pretty pure and singleton-y to me...
 
 
 - - -
