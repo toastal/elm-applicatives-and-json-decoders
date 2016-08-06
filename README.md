@@ -19,8 +19,6 @@ npm start
 
 So we know how `Maybe` works--it's a `Just a` or `Nothing`.
 
-`a` in `Just a` can be a function.
-
 To go from a `Just 1` to a `Just 3` we'd use `map`
 
 
@@ -28,6 +26,8 @@ To go from a `Just 1` to a `Just 3` we'd use `map`
 Maybe.map ((+) 2) (Just 1) == Just 3
 --=> True
 ```
+
+`a` in `Just a` can be a function.
 
 
 So what happens if we had a `Just (+)` with the addition infix
