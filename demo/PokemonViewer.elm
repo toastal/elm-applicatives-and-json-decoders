@@ -80,7 +80,7 @@ update msg model =
 getPokemon : Int -> Task Http.Error Pokemon
 getPokemon id =
     Http.get pokemonDecoder
-        <| String.join "" [ "http://pokeapi.co/api/v2/pokemon/", toString id, "/" ]
+        <| String.join "" [ "https://pokeapi.co/api/v2/pokemon/", toString id, "/" ]
 
 
 {-| Builds a list from the first Pokémon, Bulbasaur, to the specified limit.
