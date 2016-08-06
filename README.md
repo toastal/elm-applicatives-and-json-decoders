@@ -80,7 +80,7 @@ bar =
 ```
 
 
-And let's apply the value to completely
+And let's apply values to completion
 
 
 ```elm
