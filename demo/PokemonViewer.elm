@@ -8,6 +8,7 @@ import Html.Keyed
 import Http
 import Json.Decode as Decode exposing (Decoder, (:=))
 import Json.Decode.Extra as Decode exposing ((|:))
+import List.Extra as List
 import String
 import String.Extra as String
 import Task exposing (Task)
@@ -37,7 +38,9 @@ pokemonDecoder =
     Decode.succeed Pokemon
         |: ("id" := Decode.int)
         |: ("name" := Decode.string)
-        |: (Decode.at [ "sprites", "front_default" ] Decode.string)
+        |: (Decode.map (String.split "http:" >> List.last >> Maybe.withDefault "")
+                <| Decode.at [ "sprites", "front_default" ] Decode.string
+           )
         |: ("types" := (Decode.array <| Decode.at [ "type", "name" ] Decode.string))
 
 
