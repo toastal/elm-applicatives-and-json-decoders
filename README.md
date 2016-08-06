@@ -285,7 +285,7 @@ main =
 
 `Decode.list : Decoder a -> Decoder (List a)`
 
-But, go look at the demo.
+But, go look at the demo `JsonDecodeApplicative.elm`.
 
 
 - - -
@@ -302,4 +302,4 @@ of the time you'll see `andMap`, `ap`, or `apply`.
 - - -
 
 
-So let's see some in action -- see Pokémon example.
+So let's see some in action -- see [Pokémon example](https://codepen.io/toastal/pen/kXAKPk) `PokemonViewer.elm`.
