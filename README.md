@@ -1,4 +1,5 @@
 # Elm Applicatives & Json Decoders
+## FP Concepts They Don't Want You to Know About (Which Is Why All the Fun Stuff is Hidden in *.Extra)
 #### Special thanks to [@fresheyeball](https://github.com/fresheyeball) for explaining this shit to me
 
 
@@ -20,8 +21,18 @@ So we know how `Maybe` works--it's a `Just a` or `Nothing`.
 
 `a` in `Just a` can be a function.
 
+To go from a `Just 1` to a `Just 3` we'd use `map`
+
+
+```elm
+Maybe.map ((+) 2) (Just 1) == Just 3
+--=> True
+```
+
+
 So what happens if we had a `Just (+)` with the addition infix
-operator... how do we use this to add in an applicative manner?
+operator... how do we use this to add in an applicative manner
+to add Just 1 and Just 2?
 
 
 - - -
@@ -52,7 +63,7 @@ So what is `Just (+)`?
 ```elm
 foo : Maybe (number -> number -> number)
 foo =
-  Just (+)
+    Just (+)
 ```
 
 
@@ -65,7 +76,7 @@ import Maybe.Extra as Maybe
 
 bar : Maybe (number -> number)
 bar =
-  foo `Maybe.andMap` Just 1
+    foo `Maybe.andMap` Just 1
 ```
 
 
@@ -75,11 +86,11 @@ And let's apply the value to completely
 ```elm
 baz : Maybe Int
 baz =
-  bar `Maybe.andMap` Just 2
+    bar `Maybe.andMap` Just 2
 
 isJust3 : Bool
 isJust3 =
-  baz == Just 3
+    baz == Just 3
 --=> True
 ```
 
@@ -87,21 +98,42 @@ isJust3 =
 {-| Would be cool if we had Maybe.Extra.singleton -}
 singleton : a -> Maybe a
 singleton =
-  Just
+    Just
 
 infixl 2 =>
 (<*>) : Maybe (a -> b) -> Maybe a -> Maybe b
 (<*>) =
-  Maybe.andMap
+    Maybe.andMap
 
 isNothing : Bool
 isNothing =
-  singleton (+) <*> Just 1 <*> Nothing == Nothing
+    singleton (+) <*> Just 1 <*> Nothing == Nothing
 --=> True
 ```
 
 
 Look at the the demo `MaybeApplicative.elm`.
+
+
+- - -
+
+
+So where have we seen a something like this?
+
+
+```elm
+foo' : number -> number -> number
+foo' x y =
+    x * y
+
+
+foo'' : number -> number
+foo'' =
+    foo' 1
+```
+
+
+` ` is function application ;)
 
 
 - - -
@@ -254,3 +286,14 @@ main =
 `Decode.list : Decoder a -> Decoder (List a)`
 
 But, go look at the demo.
+
+
+- - -
+
+
+So how do we find Applicatives in a language like Elm without
+higher-kinded types? Look for type signatures and certain names
+or think about what the `singleton` would be.
+
+In Elm you'll see the term `singleton` for `pure`. ...And most
+of the time you'll see `andMap`, `ap`, or `apply`.
