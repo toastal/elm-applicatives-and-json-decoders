@@ -145,12 +145,12 @@ infixl 2 <*>
 
 isJust3 : Bool
 isJust3 =
-    singleton (+) <*> Just 1 <*> Just 2 == Just 3
+    (singleton (+) <*> Just 1 <*> Just 2) == Just 3
 --=> True
 
 isNothing : Bool
 isNothing =
-    singleton (+) <*> Just 1 <*> Nothing == Nothing
+    (singleton (+) <*> Just 1 <*> Nothing) == Nothing
 --=> True
 ```
 
