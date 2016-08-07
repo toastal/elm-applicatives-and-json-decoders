@@ -64,10 +64,11 @@ Examples of Elm singletons:
 
 - `List` - `flip (::) []`
 
-And the ability to apply values in with a lift:
+And the ability to lift in values in with apply:
 
 
 ```haskell
+liftA :: Applicative f => (a -> b) -> f a -> f b
 (<*>) :: f (a -> b) -> f a -> f b
 ```
 
