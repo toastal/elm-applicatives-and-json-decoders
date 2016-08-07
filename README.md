@@ -65,7 +65,7 @@ Examples of Elm singletons:
 - `Result` - `Ok`
 
 - `List` - `flip (::) []`
- 
+
 
 
 
@@ -142,6 +142,11 @@ infixl 2 <*>
 (<*>) =
     Maybe.andMap
 
+isJust3 : Bool
+isJust3 =
+    singleton (+) <*> Just 1 <*> Just 2 == Just 3
+--=> True
+
 isNothing : Bool
 isNothing =
     singleton (+) <*> Just 1 <*> Nothing == Nothing
@@ -169,7 +174,7 @@ foo' x y =
 foo'' : number -> number
 foo'' =
     foo' 1
-    
+
 
 -- Easter Egg: we've created a monoid
 foo'' 37 == 37
@@ -256,7 +261,7 @@ Let's create a decoder using applicative.
 
 Reminder: the constructor for `CoolItem` is `(Int -> Bool -> CoolItem)`
 
-Also, let's forget that the `Json.Decode.object*`s even exist because 
+Also, let's forget that the `Json.Decode.object*`s even exist because
 they don't scale infinity whereas the applicatives do.
 
 
@@ -341,14 +346,14 @@ higher-kinded types? Look for type signatures and certain names
 or think about what the `singleton` would be.
 
 In Elm you'll see the term `singleton` or `succeed` (like `Decoder`
-and `Task`) for `pure`. 
+and `Task`) for `pure`.
 ...And most of the time you'll see `andMap`, `ap`, or `apply`.
 
 
 - - -
 
 
-So let's see some in action with some real JSON HTTP requests 
-because people want to know about Tasks and Cmds as well -- 
-see [Pokémon example](https://codepen.io/toastal/pen/kXAKPk) 
+So let's see some in action with some real JSON HTTP requests
+because people want to know about Tasks and Cmds as well --
+see [Pokémon example](https://codepen.io/toastal/pen/kXAKPk)
 `PokemonViewer.elm`.
