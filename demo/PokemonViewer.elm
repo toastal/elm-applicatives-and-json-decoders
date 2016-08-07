@@ -198,7 +198,7 @@ stylez =
     dl dd { margin: 0; white-space: pre-wrap }
     dl dd::after { content: "\\A" }
     .container { display: flex; flex-flow: column nowrap; justify-content: center }
-    .pokemon-list { display: flex; flex-flow: row wrap; list-style: none; margin: -1px 0 0 -1px; font-size: 1.3em }
+    .pokemon-list { display: flex; flex-flow: row wrap; justify-content: center; list-style: none; margin: -1px 0 0 -1px; font-size: 1.3em }
     .pokemon-list-item { display: flex; justify-content: center; align-content: center; position: relative; will-change: opacity; min-width: 13em; min-height: 13em; padding: 1.5em; margin-left: -1px; margin-top: -1px; border: 1px solid hsl(190, 80%, 28%); transition: border-color 300ms ease-out; animation: fadein 450ms ease-out 0s normal 1 both }
     .pokemon-list-item:hover { z-index: 1; border-color: hsl(190, 80%, 48%) }
     @keyframes fadein { 0% { opacity: 0 } 100% { opacity: 1 } }
