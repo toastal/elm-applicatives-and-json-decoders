@@ -330,6 +330,7 @@ So all we have to do now is set up our app to decode the JSON
 
 ```elm
 import Html exposing (Html, text)
+import Json.Decode as Decode
 
 
 view : a -> Html String
