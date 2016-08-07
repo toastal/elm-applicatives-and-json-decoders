@@ -205,7 +205,7 @@ foo'' 37 == 37
 
 In [`Json.Decode.Extra`](http://package.elm-lang.org/packages/elm-community/json-extra/1.0.0/Json-Decode-Extra)
 we have [`apply`](http://package.elm-lang.org/packages/elm-community/json-extra/1.0.0/Json-Decode-Extra#apply)
-and the infix [`:=`](http://package.elm-lang.org/packages/elm-community/json-extra/1.0.0/Json-Decode-Extra#|:):
+and the infix [`|:`](http://package.elm-lang.org/packages/elm-community/json-extra/1.0.0/Json-Decode-Extra#|:):
 
 
 ```elm
