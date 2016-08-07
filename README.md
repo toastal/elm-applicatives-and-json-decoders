@@ -7,10 +7,22 @@
 
 ## Setup
 
+
+Installs deps and then runs Elm Reactor
+
+
 ```bash
 npm install
 npm start
 ```
+
+- - -
+
+
+#### What we're building towards:
+
+[Pokémon Viewer working demo](https://codepen.io/toastal/pen/kXAKPk)
+
 
 - - -
 
@@ -153,7 +165,8 @@ isNothing =
 ```
 
 
-Look at the the demo `MaybeApplicative.elm`.
+Look at the the demo
+[`MaybeApplicative.elm`](https://github.com/toastal/elm-applicatives-and-json-decoders/blob/master/demo/MaybeApplicative.elm).
 
 
 - - -
@@ -336,7 +349,8 @@ main =
 
 `Decode.list : Decoder a -> Decoder (List a)`
 
-But, go look at the demo `JsonDecodeApplicative.elm`.
+But, go look at the demo 
+[`JsonDecodeApplicative.elm`](https://github.com/toastal/elm-applicatives-and-json-decoders/blob/master/demo/JsonDecodeApplicative.elm).
 
 
 - - -
@@ -356,5 +370,5 @@ and `Task`) for `pure`.
 
 So let's see some in action with some real JSON HTTP requests
 because people want to know about Tasks and Cmds as well --
-see [Pokémon example](https://codepen.io/toastal/pen/kXAKPk)
-`PokemonViewer.elm`.
+see [Pokémon Viewer demo](https://codepen.io/toastal/pen/kXAKPk)
+[`PokemonViewer.elm`](https://github.com/toastal/elm-applicatives-and-json-decoders/blob/master/demo/PokemonViewer.elm).
