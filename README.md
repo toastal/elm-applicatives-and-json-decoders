@@ -73,7 +73,7 @@ Examples of Elm singletons:
 - - -
 
 
-And the ability to lift in values in with apply:
+And the ability to lift in values in with apply (Haskell):
 
 
 ```haskell
