@@ -168,7 +168,9 @@ foo'' =
 ## So how does this relate to Json Decoders?
 
 
-In `Json.Decode.Extra`:
+In [`Json.Decode.Extra`](http://package.elm-lang.org/packages/elm-community/json-extra/1.0.0/Json-Decode-Extra)
+we have [`apply`](http://package.elm-lang.org/packages/elm-community/json-extra/1.0.0/Json-Decode-Extra#apply)
+and the infix [:=](http://package.elm-lang.org/packages/elm-community/json-extra/1.0.0/Json-Decode-Extra#|:):
 
 
 ```elm
@@ -179,7 +181,8 @@ apply : Decoder (a -> b) -> Decoder a -> Decoder b
 
 Well that's obviously apply...
 
-And in `Json.Decode`:
+And in [`Json.Decode`](http://package.elm-lang.org/packages/elm-lang/core/4.0.4/Json-Decode)
+we have [`succeed`](http://package.elm-lang.org/packages/elm-lang/core/4.0.4/Json-Decode#succeed):
 
 
 ```elm
