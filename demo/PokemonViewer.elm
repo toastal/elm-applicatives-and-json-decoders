@@ -1,9 +1,10 @@
 module PokemonViewer exposing (..)
 
 import Dict exposing (Dict)
-import Html exposing (Html, div, a, dd, dl, dt, h1, img, li, node, text)
+import Html exposing (Html, button, div, a, dd, dl, dt, footer, h1, img, li, node, text)
 import Html.App exposing (program)
 import Html.Attributes as Attr exposing (alt, class, href, rel, src, style, target, title, type')
+import Html.Events exposing (onClick)
 import Html.Keyed
 import Http
 import Json.Decode as Decode exposing (Decoder, (:=))
@@ -142,7 +143,8 @@ pokemonDecoder =
 
 
 type alias Model =
-    { pokemon : List Pokemon
+    { offset : Int
+    , pokemon : List Pokemon
     }
 
 
@@ -151,20 +153,27 @@ type alias Model =
 
 
 type Msg
-    = FetchPokemonSucceed Pokemon
+    = FetchMore Int
     | FetchPokemonFail Http.Error
+    | FetchPokemonSucceed Pokemon
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    flip (,) Cmd.none
-        <| case msg of
-            FetchPokemonSucceed pkmn ->
-                { model | pokemon = List.sortBy .id <| model.pokemon ++ [ pkmn ] }
+    case msg of
+        FetchMore m ->
+            ( { model | offset = model.offset + 1 + m }
+            , getPokemonsBetween (model.offset + 1) (model.offset + 1 + m)
+            )
 
-            -- Swallowing error
-            FetchPokemonFail _ ->
-                model
+        FetchPokemonSucceed pkmn ->
+            ( { model | pokemon = List.sortBy .id <| model.pokemon ++ [ pkmn ] }
+            , Cmd.none
+            )
+
+        -- Swallowing error, because this is just a demo
+        FetchPokemonFail _ ->
+            ( model, Cmd.none )
 
 
 
@@ -323,6 +332,10 @@ view { pokemon } =
                 div []
                     [ Html.Keyed.ol [ class "pokemon-list" ]
                         <| List.map viewPokemon pokemon
+                    , footer [ class "more-footer" ]
+                        [ button [ type' "button", onClick <| FetchMore 12 ]
+                            [ text "Fetch 12 More Pokémon" ]
+                        ]
                     ]
         ]
 
@@ -345,12 +358,16 @@ stylez =
     dl dt::after { content: ": "; vertical-align: top }
     dl dd { margin: 0; white-space: pre-wrap }
     dl dd::after { content: "\\A" }
+    button { -webkit-appearance: none; -moz-appearance: none; appearance: none; border: 2px solid hsl(190, 80%, 60%); background: transparent; color: hsl(190, 80%, 60%); font-family: inherit; font-size: 16px; cursor: pointer; transition-property: border-color, background-color, color; transition-duration: 300ms; transition-timing-function: ease-out }
+    button:hover, button:focus { background-color: hsl(190, 80%, 60%); color: #111 }
+    button:active { background-color: #fff; border-color: #fff }
     .container { display: flex; flex-flow: column nowrap; justify-content: center; padding: 1.2em }
     .pokemon-list { display: flex; flex-flow: row wrap; list-style: none; margin: 1px 0 0 1px; padding: 0; font-size: 1.3em }
     .pokemon-list-item { display: flex; justify-content: center; align-content: center; position: relative; will-change: opacity; min-width: 13em; min-height: 13em; padding: 1.5em; margin-left: -1px; margin-top: -1px; border: 1px solid hsl(190, 80%, 28%); transition: border-color 300ms ease-out; animation: fadein 450ms ease-out 0s normal 1 both }
     .pokemon-list-item:hover { z-index: 1; border-color: hsl(190, 80%, 48%) }
     .stat-bar { overflow: hidden; height: 1.1em; width: 5%; padding: 0 0.25em; background-color: hsl(190, 80%, 30%); font-size: 0.7em; line-height: 1.3; color: hsla(0, 0%, 0%, 0.34); text-transform: uppercase; white-space: nowrap; cursor: help; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none }
     @keyframes fadein { 0% { opacity: 0 } 100% { opacity: 1 } }
+    .more-footer { padding: 0.5em 1em; text-align: center }
     .loader { position: absolute; z-index: 10; top: 0; bottom: 0; left: 0; right: 0; margin: auto; height: 16vmin; width: 16vmin; min-height: 12px; min-width: 12px; max-width: 110px; max-height: 110px; background-repeat: no-repeat; background-position: 50% 50%; background-size: contain; background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHdpZHRoPSIxMjBweCIgaGVpZ2h0PSIxMjBweCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQiIGNsYXNzPSJ1aWwtc3F1YXJlcyI+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9Im5vbmUiIGNsYXNzPSJiayI+PC9yZWN0PjxyZWN0IHg9IjE1IiB5PSIxNSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjMGY3NTg5IiBjbGFzcz0ic3EiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9ImZpbGwiIGZyb209IiMwZjc1ODkiIHRvPSIjNDdjZmVhIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgZHVyPSIxcyIgYmVnaW49IjAuMHMiIHZhbHVlcz0iIzQ3Y2ZlYTsjNDdjZmVhOyMwZjc1ODk7IzBmNzU4OSIga2V5VGltZXM9IjA7MC4xOzAuMjsxIj48L2FuaW1hdGU+PC9yZWN0PjxyZWN0IHg9IjQwIiB5PSIxNSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjMGY3NTg5IiBjbGFzcz0ic3EiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9ImZpbGwiIGZyb209IiMwZjc1ODkiIHRvPSIjNDdjZmVhIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgZHVyPSIxcyIgYmVnaW49IjAuMTI1cyIgdmFsdWVzPSIjNDdjZmVhOyM0N2NmZWE7IzBmNzU4OTsjMGY3NTg5IiBrZXlUaW1lcz0iMDswLjE7MC4yOzEiPjwvYW5pbWF0ZT48L3JlY3Q+PHJlY3QgeD0iNjUiIHk9IjE1IiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9IiMwZjc1ODkiIGNsYXNzPSJzcSI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbCIgZnJvbT0iIzBmNzU4OSIgdG89IiM0N2NmZWEiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiBkdXI9IjFzIiBiZWdpbj0iMC4yNXMiIHZhbHVlcz0iIzQ3Y2ZlYTsjNDdjZmVhOyMwZjc1ODk7IzBmNzU4OSIga2V5VGltZXM9IjA7MC4xOzAuMjsxIj48L2FuaW1hdGU+PC9yZWN0PjxyZWN0IHg9IjE1IiB5PSI0MCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjMGY3NTg5IiBjbGFzcz0ic3EiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9ImZpbGwiIGZyb209IiMwZjc1ODkiIHRvPSIjNDdjZmVhIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgZHVyPSIxcyIgYmVnaW49IjAuODc1cyIgdmFsdWVzPSIjNDdjZmVhOyM0N2NmZWE7IzBmNzU4OTsjMGY3NTg5IiBrZXlUaW1lcz0iMDswLjE7MC4yOzEiPjwvYW5pbWF0ZT48L3JlY3Q+PHJlY3QgeD0iNjUiIHk9IjQwIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9IiMwZjc1ODkiIGNsYXNzPSJzcSI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbCIgZnJvbT0iIzBmNzU4OSIgdG89IiM0N2NmZWEiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiBkdXI9IjFzIiBiZWdpbj0iMC4zNzUiIHZhbHVlcz0iIzQ3Y2ZlYTsjNDdjZmVhOyMwZjc1ODk7IzBmNzU4OSIga2V5VGltZXM9IjA7MC4xOzAuMjsxIj48L2FuaW1hdGU+PC9yZWN0PjxyZWN0IHg9IjE1IiB5PSI2NSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjMGY3NTg5IiBjbGFzcz0ic3EiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9ImZpbGwiIGZyb209IiMwZjc1ODkiIHRvPSIjNDdjZmVhIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgZHVyPSIxcyIgYmVnaW49IjAuNzVzIiB2YWx1ZXM9IiM0N2NmZWE7IzQ3Y2ZlYTsjMGY3NTg5OyMwZjc1ODkiIGtleVRpbWVzPSIwOzAuMTswLjI7MSI+PC9hbmltYXRlPjwvcmVjdD48cmVjdCB4PSI0MCIgeT0iNjUiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0iIzBmNzU4OSIgY2xhc3M9InNxIj48YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJmaWxsIiBmcm9tPSIjMGY3NTg5IiB0bz0iIzQ3Y2ZlYSIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIGR1cj0iMXMiIGJlZ2luPSIwLjYyNXMiIHZhbHVlcz0iIzQ3Y2ZlYTsjNDdjZmVhOyMwZjc1ODk7IzBmNzU4OSIga2V5VGltZXM9IjA7MC4xOzAuMjsxIj48L2FuaW1hdGU+PC9yZWN0PjxyZWN0IHg9IjY1IiB5PSI2NSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjMGY3NTg5IiBjbGFzcz0ic3EiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9ImZpbGwiIGZyb209IiMwZjc1ODkiIHRvPSIjNDdjZmVhIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgZHVyPSIxcyIgYmVnaW49IjAuNXMiIHZhbHVlcz0iIzQ3Y2ZlYTsjNDdjZmVhOyMwZjc1ODk7IzBmNzU4OSIga2V5VGltZXM9IjA7MC4xOzAuMjsxIj48L2FuaW1hdGU+PC9yZWN0Pjwvc3ZnPg==')}
     """
 
@@ -359,10 +376,15 @@ stylez =
 -- MAIN
 
 
+offset' : Int
+offset' =
+    24
+
+
 main : Program Never
 main =
     program
-        { init = ( Model [], getPokemonsBetween 1 24 )
+        { init = ( Model offset' [], getPokemonsBetween 1 offset' )
         , view = view
         , update = update
         , subscriptions = always Sub.none
