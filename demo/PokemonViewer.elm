@@ -233,7 +233,7 @@ viewStatBar ( key, max, val ) =
             [ title <| label ++ ": " ++ toString val
             , class "stat-bar"
             , style
-                [ ( "width", toString ((90 * perc) + 10) ++ "%" )
+                [ ( "width", toString ((95 * perc) + 5) ++ "%" )
                 , ( "backgroundColor", "hsl(190, 80%, " ++ toString ((70 * perc) + 30) ++ "%)" )
                 ]
             ]
