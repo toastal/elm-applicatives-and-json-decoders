@@ -61,7 +61,7 @@ Applicatives have 2 properties:
 - - -
 
 
-Pure lets us know how to create a singleton list of for the
+Pure lets us know how to create a singleton list for the
 default case of some applicative. The type signature of pure
 in Haskell should make sense.
 
@@ -274,7 +274,7 @@ Let's create a decoder using applicative.
 Reminder: the constructor for `CoolItem` is `(Int -> Bool -> CoolItem)`
 
 Also, let's forget that the `Json.Decode.object*`s even exist because
-they don't scale infinity whereas the applicatives do.
+they don't scale infinitely whereas the applicative use does.
 
 
 ```elm
