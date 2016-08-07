@@ -148,18 +148,21 @@ So where have we seen a something like this?
 
 
 ```elm
+-- given the function foo'...
 foo' : number -> number -> number
 foo' x y =
     x * y
 
 
+-- partially in a 1
+-- Easter Egg: we've created a monoid
 foo'' : number -> number
 foo'' =
     foo' 1
 ```
 
 
-` ` is function application ;)
+` ` (space) is function application ;)
 
 
 - - -
