@@ -64,12 +64,10 @@ Examples of Elm singletons:
 
 - `List` - `flip (::) []`
 
-
-And the ability to lift in values in with apply:
+And the ability to apply values in with a lift:
 
 
 ```haskell
-liftA :: Applicative f => (a -> b) -> f a -> f b
 (<*>) :: f (a -> b) -> f a -> f b
 ```
 
@@ -150,21 +148,18 @@ So where have we seen a something like this?
 
 
 ```elm
--- given this function...
 foo' : number -> number -> number
 foo' x y =
     x * y
 
 
--- ...partially apply a 1
--- Easter Egg: we have a monoid
 foo'' : number -> number
 foo'' =
     foo' 1
 ```
 
 
-` ` (space) is function application ;)
+` ` is function application ;)
 
 
 - - -
@@ -175,7 +170,7 @@ foo'' =
 
 In [`Json.Decode.Extra`](http://package.elm-lang.org/packages/elm-community/json-extra/1.0.0/Json-Decode-Extra)
 we have [`apply`](http://package.elm-lang.org/packages/elm-community/json-extra/1.0.0/Json-Decode-Extra#apply)
-and the infix [:=](http://package.elm-lang.org/packages/elm-community/json-extra/1.0.0/Json-Decode-Extra#|:):
+and the infix [`:=`](http://package.elm-lang.org/packages/elm-community/json-extra/1.0.0/Json-Decode-Extra#|:):
 
 
 ```elm
@@ -243,8 +238,8 @@ Let's create a decoder using applicative.
 
 Reminder: the constructor for `CoolItem` is `(Int -> Bool -> CoolItem)`
 
-Also, lets forget `Json.Decode.objectN`s don't exist because they don't
-scale infinity whereas the applicatives do.
+Also, let's forget that the `Json.Decode.object*`s even exist because 
+they don't scale infinity whereas the applicatives do.
 
 
 ```elm
