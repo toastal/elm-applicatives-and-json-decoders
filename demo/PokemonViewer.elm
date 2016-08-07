@@ -1,9 +1,9 @@
 module PokemonViewer exposing (..)
 
 import Array exposing (Array)
-import Html exposing (..)
+import Html exposing (Html, div, a, dd, dl, dt, h1, img, li, node, text)
 import Html.App exposing (program)
-import Html.Attributes as Attr exposing (..)
+import Html.Attributes as Attr exposing (alt, class, href, rel, src, style, target, title, type')
 import Html.Keyed
 import Http
 import Json.Decode as Decode exposing (Decoder, (:=))
@@ -119,7 +119,7 @@ viewPokemon { id, name, sprite, types } =
         , li [ class "pokemon-list-item" ]
             [ dl []
                 [ dt [] [ text "ID" ]
-                , dd [] [ text id' ]
+                , dd [] [ text <| String.padLeft 3 '0' id' ]
                 , dt [] [ text "Name" ]
                 , dd [] [ text name' ]
                 , dt [] [ text "Sprite" ]
@@ -157,7 +157,7 @@ view { pokemon } =
             , rel "stylesheet"
             ]
             []
-        , h1 [ style [ ( "textAlign", "center" ) ] ]
+        , h1 [ style [ ( "textAlign", "center" ), ( "marginTop", "0" ) ] ]
             [ text "Applicative-Style Elm JSON Decoding - "
             , a
                 [ href "https://github.com/toastal/elm-applicatives-and-json-decoders/blob/master/demo/PokemonViewer.elm"
@@ -188,17 +188,18 @@ view { pokemon } =
 -}
 stylez : String
 stylez =
-    """html { box-sizing: border-box; background-color: #111; color: #fff; font-family: "Teko", sans-serif; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale }
+    """
+    html { box-sizing: border-box; background-color: #111; color: #fff; font-family: "Teko", sans-serif; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale }
     *, *::before, *::after { box-sizing: inherit }
     a { color: hsl(190, 80%, 60%); transition: color 300ms ease-out }
     a:hover, a:focus { color: hsl(190, 90%, 74%) }
     dl dt, dl dd { display: inline }
     dl dt { vertical-align: top; font-weight: 600; color: hsl(190, 80%, 60%) }
-    dl dt::after { content: ": " }
+    dl dt::after { content: ": "; vertical-align: top }
     dl dd { margin: 0; white-space: pre-wrap }
     dl dd::after { content: "\\A" }
-    .container { display: flex; flex-flow: column nowrap; justify-content: center }
-    .pokemon-list { display: flex; flex-flow: row wrap; justify-content: center; list-style: none; margin: -1px 0 0 -1px; font-size: 1.3em }
+    .container { display: flex; flex-flow: column nowrap; justify-content: center; padding: 1.2em }
+    .pokemon-list { display: flex; flex-flow: row wrap; list-style: none; margin: 1px 0 0 1px; padding: 0; font-size: 1.3em }
     .pokemon-list-item { display: flex; justify-content: center; align-content: center; position: relative; will-change: opacity; min-width: 13em; min-height: 13em; padding: 1.5em; margin-left: -1px; margin-top: -1px; border: 1px solid hsl(190, 80%, 28%); transition: border-color 300ms ease-out; animation: fadein 450ms ease-out 0s normal 1 both }
     .pokemon-list-item:hover { z-index: 1; border-color: hsl(190, 80%, 48%) }
     @keyframes fadein { 0% { opacity: 0 } 100% { opacity: 1 } }
