@@ -340,11 +340,15 @@ So how do we find Applicatives in a language like Elm without
 higher-kinded types? Look for type signatures and certain names
 or think about what the `singleton` would be.
 
-In Elm you'll see the term `singleton` for `pure`. ...And most
-of the time you'll see `andMap`, `ap`, or `apply`.
+In Elm you'll see the term `singleton` or `succeed` (like `Decoder`
+`and` Task) for `pure`. 
+...And most of the time you'll see `andMap`, `ap`, or `apply`.
 
 
 - - -
 
 
-So let's see some in action with some real JSON HTTP requests because people want to know about Tasks and Cmds as well -- see [Pokémon example](https://codepen.io/toastal/pen/kXAKPk) `PokemonViewer.elm`.
+So let's see some in action with some real JSON HTTP requests 
+because people want to know about Tasks and Cmds as well -- 
+see [Pokémon example](https://codepen.io/toastal/pen/kXAKPk) 
+`PokemonViewer.elm`.
