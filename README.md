@@ -104,6 +104,7 @@ Looks a lot like apply/lift… So let's use it:
 ```elm
 import Maybe.Extra as Maybe
 
+-- foo = Just (+)
 
 bar : Maybe (number -> number)
 bar =
@@ -115,9 +116,10 @@ And let's apply values to completion
 
 
 ```elm
-baz : Maybe Int
+baz : Maybe number
 baz =
     bar `Maybe.andMap` Just 2
+
 
 isJust3 : Bool
 isJust3 =
@@ -160,10 +162,14 @@ foo' x y =
 
 
 -- partially in a 1
--- Easter Egg: we've created a monoid
 foo'' : number -> number
 foo'' =
     foo' 1
+    
+
+-- Easter Egg: we've created a monoid
+foo'' 37 == 37
+--=> True
 ```
 
 
