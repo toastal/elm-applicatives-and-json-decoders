@@ -49,13 +49,27 @@ Applicatives have 2 properties:
 
 
 Pure lets us know how to create a singleton list of for the
-default case of some applicative. Examples of Elm singletons:
+default case of some applicative. The type signature of pure
+in Haskell should make sense.
+
+
+```haskell
+pure :: Applicative f => a -> f a
+```
+
+
+Examples of Elm singletons:
 
 - `Maybe` - `Just`
 
 - `List` - `flip (::) []`
 
-And the ability to apply values in.
+And the ability to apply values in with a lift:
+
+
+```haskell
+(<*>) :: f (a -> b) -> f a -> f b
+```
 
 
 - - -
@@ -71,7 +85,15 @@ foo =
 ```
 
 
-So let's use apply
+What is [`Maybe.Extra.andMap`](http://package.elm-lang.org/packages/elm-community/maybe-extra/1.1.0/Maybe-Extra#andMap)?
+
+
+```elm
+andMap : Maybe (a -> b) -> Maybe a -> Maybe b
+```
+
+
+Looks a lot like apply/lift… So let's use it:
 
 
 ```elm
