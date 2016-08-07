@@ -12,6 +12,6 @@ trim_trailing_whitespace = true
 [*.{css,elm,js,json,sass}]
 charset = utf-8
 
-[*.elm]
+[*.{elm,md}]
 indent_size = 4
 
