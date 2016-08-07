@@ -268,11 +268,9 @@ they don't scale infinity whereas the applicatives do.
 import Json.Decode as Decode exposing ((:=))
 
 
-coolItemDecoder : Decoder CoolItem
-coolItemDecoder =
-    Decode.succeed CoolItem
-        |: ("foo" := Decode.int)
-        |: ("bar" := Decode.bool)
+fooDecoder : Decoder Int
+fooDecoder =
+    "foo" := Decode.int
 ```
 
 
@@ -280,6 +278,10 @@ coolItemDecoder =
 
 So this `:=` infix operator is used to apply the given decoder given
 a string for a key in a JSON object (e.g. "foo" will be decoded as an integer).
+
+
+- - -
+
 
 So what happens when when apply in our foo decoder?
 
