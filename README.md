@@ -341,7 +341,7 @@ higher-kinded types? Look for type signatures and certain names
 or think about what the `singleton` would be.
 
 In Elm you'll see the term `singleton` or `succeed` (like `Decoder`
-`and` Task) for `pure`. 
+and `Task`) for `pure`. 
 ...And most of the time you'll see `andMap`, `ap`, or `apply`.
 
 
