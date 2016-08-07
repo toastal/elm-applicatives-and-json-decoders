@@ -64,10 +64,12 @@ Examples of Elm singletons:
 
 - `List` - `flip (::) []`
 
-And the ability to apply values in with a lift:
+
+And the ability to lift in values in with apply:
 
 
 ```haskell
+liftA :: Applicative f => (a -> b) -> f a -> f b
 (<*>) :: f (a -> b) -> f a -> f b
 ```
 
@@ -148,18 +150,21 @@ So where have we seen a something like this?
 
 
 ```elm
+-- given this function...
 foo' : number -> number -> number
 foo' x y =
     x * y
 
 
+-- ...partially apply a 1
+-- Easter Egg: we have a monoid
 foo'' : number -> number
 foo'' =
     foo' 1
 ```
 
 
-` ` is function application ;)
+` ` (space) is function application ;)
 
 
 - - -
