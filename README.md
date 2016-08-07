@@ -62,7 +62,11 @@ Examples of Elm singletons:
 
 - `Maybe` - `Just`
 
+- `Result` - `Ok`
+
 - `List` - `flip (::) []`
+ 
+
 
 
 - - -
