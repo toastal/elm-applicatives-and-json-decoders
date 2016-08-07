@@ -67,8 +67,6 @@ Examples of Elm singletons:
 
 - `List` - `flip (::) []`
 
-- `Functions` - `identity`
-
 
 - - -
 
