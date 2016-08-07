@@ -64,6 +64,10 @@ Examples of Elm singletons:
 
 - `List` - `flip (::) []`
 
+
+- - -
+
+
 And the ability to lift in values in with apply:
 
 
