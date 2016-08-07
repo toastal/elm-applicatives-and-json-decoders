@@ -19,7 +19,8 @@ npm start
 
 So we know how `Maybe` works--it's a `Just a` or `Nothing`.
 
-To go from a `Just 1` to a `Just 3` we'd use `map`
+To go from a `Just 1` to a `Just 3` we'd use `map` because
+`Maybe` is a Functor.
 
 
 ```elm
@@ -66,7 +67,7 @@ Examples of Elm singletons:
 
 - `List` - `flip (::) []`
 
-
+- `Functions` - `identity`
 
 
 - - -
