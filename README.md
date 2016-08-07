@@ -1,5 +1,5 @@
 # Elm Applicatives & Json Decoders
-## FP Concepts They Don't Want You to Know About (Which Is Why All the Fun Stuff is Hidden in *.Extra)
+## FP Concepts They Don’t Want You to Know About (Which Is Why All the *Fun* Stuff is Hidden in *.Extra)
 #### Special thanks to [@fresheyeball](https://github.com/fresheyeball) for explaining this shit to me
 
 
@@ -19,7 +19,7 @@ npm start
 - - -
 
 
-#### What we're building towards:
+#### What we’re building towards:
 
 [Pokémon Viewer working demo](https://codepen.io/toastal/pen/kXAKPk)
 
@@ -349,6 +349,7 @@ main =
 
 `Decode.list : Decoder a -> Decoder (List a)`
 
+
 But, go look at the demo 
 [`JsonDecodeApplicative.elm`](https://github.com/toastal/elm-applicatives-and-json-decoders/blob/master/demo/JsonDecodeApplicative.elm).
 
@@ -362,13 +363,23 @@ or think about what the `singleton` would be.
 
 In Elm you'll see the term `singleton` or `succeed` (like `Decoder`
 and `Task`) for `pure`.
-...And most of the time you'll see `andMap`, `ap`, or `apply`.
+…And most of the time you'll see `andMap`, `ap`, or `apply`.
 
 
 - - -
 
 
-So let's see some in action with some real JSON HTTP requests
-because people want to know about Tasks and Cmds as well --
-see [Pokémon Viewer demo](https://codepen.io/toastal/pen/kXAKPk)
+## The Real Takeaway / TL;DR:
+
+If we always keep in mind that `Json.Decode.Decoder` is an 
+applicative functor, we can `map` and `apply` our way to a JSON 
+deserialization victory—something I found incredibly confusing
+when I first started (literally to the point where I abandoned
+some projects early on because I didn't know how to decode some
+scarier JSON).
+
+**So let's see some in action** with some real JSON HTTP
+requests because people want to know how to work with Tasks and
+Cmds as well—see 
+[Pokémon Viewer demo](https://codepen.io/toastal/pen/kXAKPk)
 [`PokemonViewer.elm`](https://github.com/toastal/elm-applicatives-and-json-decoders/blob/master/demo/PokemonViewer.elm).
