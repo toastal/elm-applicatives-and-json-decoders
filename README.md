@@ -34,7 +34,7 @@ I’m not a Haskeller – I have an art degree.
 
 ## Quick Fly-By at Applicatives
 
-So we know how `Maybe` works--it's a `Just a` or `Nothing`.
+So we know how `Maybe` works—it’s a `Just a` or `Nothing`.
 
 To go from a `Just 1` to a `Just 3` we'd use `map` because
 `Maybe` is a Functor.
@@ -49,7 +49,7 @@ Maybe.map ((+) 2) (Just 1) == Just 3
 The `a` in `Just a` can also be a function.
 
 So what happens if we had a `Just (+)` with the addition infix
-operator... how do we use this to add in an applicative manner
+operator… how do we use this to add in an applicative manner
 to add Just 1 and Just 2?
 
 
@@ -118,7 +118,7 @@ andMap : Maybe (a -> b) -> Maybe a -> Maybe b
 ```
 
 
-Looks a lot like apply/lift… So let's use it:
+Looks a lot like apply/lift… So let’s use it:
 
 
 ```elm
@@ -132,7 +132,7 @@ bar =
 ```
 
 
-And let's apply values to completion
+And let’s apply values to completion
 
 
 ```elm
@@ -219,7 +219,7 @@ apply : Decoder (a -> b) -> Decoder a -> Decoder b
 ```
 
 
-Well that's obviously apply...
+Well that’s obviously apply…
 
 And in [`Json.Decode`](http://package.elm-lang.org/packages/elm-lang/core/4.0.4/Json-Decode)
 we have [`succeed`](http://package.elm-lang.org/packages/elm-lang/core/4.0.4/Json-Decode#succeed):
@@ -230,13 +230,13 @@ succeed : a -> Decoder a
 ```
 
 
-Looks pretty pure and singleton-y to me...
+Looks pretty pure and singleton-y to me…
 
 
 - - -
 
 
-## So let's apply (heh heh) our knowledge
+## So let’s apply (heh heh) our knowledge
 
 
 Create some dummy JSON string
@@ -278,8 +278,8 @@ Let's create a decoder using applicative.
 
 Reminder: the constructor for `CoolItem` is `(Int -> Bool -> CoolItem)`
 
-Also, let's forget that the `Json.Decode.object*`s even exist because
-they don't scale infinitely whereas the applicative use does.
+Also, let’s forget that the `Json.Decode.object*`s even exist because
+they don’t scale infinitely whereas the applicative use does.
 
 
 ```elm
@@ -367,7 +367,7 @@ So how do we find Applicatives in a language like Elm without
 higher-kinded types? Look for type signatures and certain names
 or think about what the `singleton` would be.
 
-In Elm you'll see the term `singleton` or `succeed` (like `Decoder`
+In Elm you’ll see the term `singleton` or `succeed` (like `Decoder`
 and `Task`) for `pure`.
 …And most of the time you'll see `andMap`, `ap`, or `apply`.
 
