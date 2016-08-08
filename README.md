@@ -19,6 +19,11 @@ npm start
 - - -
 
 
+#### Disclaimer:
+
+I’m not a Haskeller – I have an art degree.
+
+
 #### What we’re building towards:
 
 [Pokémon Viewer working demo](https://codepen.io/toastal/pen/kXAKPk)
@@ -307,13 +312,13 @@ import Json.Docode.Extra as Decode ((|:))
 
 baz : Decoder (Int -> Bool -> CoolItem)
 baz =
-  Decode.succeed CoolItem
+    Decode.succeed CoolItem
 
 
 qux : Decoder (Bool -> CoolItem)
 qux =
-  Decode.succeed CoolItem
-    |: ("foo" := Decode.int)
+    Decode.succeed CoolItem
+        |: ("foo" := Decode.int)
 
 
 -- And the full decoder
