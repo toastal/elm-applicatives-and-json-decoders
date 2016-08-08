@@ -99,13 +99,6 @@ flip (::) [] : a -> List a
 ```
 
 
-- `Task` - `succeed`
-
-```elm
-succeed : a -> Task x a
-```
-
-
 - - -
 
 
