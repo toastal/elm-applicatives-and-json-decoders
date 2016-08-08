@@ -80,9 +80,30 @@ Examples of Elm singletons:
 
 - `Maybe` - `Just`
 
+```elm
+Just : a -> Maybe a
+```
+
+
 - `Result` - `Ok`
 
+```elm
+Ok : a -> Result x a
+```
+
+
 - `List` - `flip (::) []`
+
+```elm
+flip (::) [] : a -> List a
+```
+
+
+- `Task` - `succeed`
+
+```elm
+succeed : a -> Task x a
+```
 
 
 - - -
