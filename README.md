@@ -1,9 +1,12 @@
 # Elm Applicatives & Json Decoders
+
 ## FP Concepts They Don’t Want You to Know About (Which Is Why All the *Fun* Stuff is Hidden in *.Extra)
+
 #### Special thanks to [@fresheyeball](https://github.com/fresheyeball) for explaining this shit to me
 
 
-- - -
+================================================================================
+
 
 ## Setup
 
@@ -31,8 +34,8 @@ npm start
 
 So we know how `Maybe` works--it's a `Just a` or `Nothing`.
 
-To go from a `Just 1` to a `Just 3` we'd use `map` because
-`Maybe` is a Functor.
+To go from a `Just 1` to a `Just 3` we'd use `map` because `Maybe`
+is a *Functor*.
 
 
 ```elm
@@ -44,8 +47,8 @@ Maybe.map ((+) 2) (Just 1) == Just 3
 The `a` in `Just a` can also be a function.
 
 So what happens if we had a `Just (+)` with the addition infix
-operator... how do we use this to add in an applicative manner
-to add Just 1 and Just 2?
+operator...  how do we use this to add in an applicative manner to
+add Just 1 and Just 2?
 
 
 - - -
@@ -61,9 +64,9 @@ Applicatives have 2 properties:
 - - -
 
 
-Pure lets us know how to create a singleton list for the
-default case of some applicative. The type signature of pure
-in Haskell should make sense.
+Pure lets us know how to create a singleton list for the default
+case of some applicative. The type signature of pure in Haskell
+should make sense.
 
 
 ```haskell
@@ -273,8 +276,9 @@ Let's create a decoder using applicative.
 
 Reminder: the constructor for `CoolItem` is `(Int -> Bool -> CoolItem)`
 
-Also, let's forget that the `Json.Decode.object*`s even exist because
-they don't scale infinitely whereas the applicative use does.
+Also, let's forget that the `Json.Decode.object*`s even exist
+because they don't scale infinitely whereas the applicative use
+does.
 
 
 ```elm
@@ -290,7 +294,8 @@ fooDecoder =
 `(:=) : String -> Decoder a -> Decoder a`
 
 So this `:=` infix operator is used to apply the given decoder given
-a string for a key in a JSON object (e.g. "foo" will be decoded as an integer).
+a string for a key in a JSON object (e.g. "foo" will be decoded as
+an integer).
 
 
 - - -
@@ -351,7 +356,7 @@ main =
 `Decode.list : Decoder a -> Decoder (List a)`
 
 
-But, go look at the demo 
+But, go look at the demo
 [`JsonDecodeApplicative.elm`](https://github.com/toastal/elm-applicatives-and-json-decoders/blob/master/demo/JsonDecodeApplicative.elm).
 
 
@@ -372,8 +377,8 @@ and `Task`) for `pure`.
 
 ## The Real Takeaway / TL;DR:
 
-If we always keep in mind that `Json.Decode.Decoder` is an 
-applicative functor, we can `map` and `apply` our way to a JSON 
+If we always keep in mind that `Json.Decode.Decoder` is an
+applicative functor, we can `map` and `apply` our way to a JSON
 deserialization victory—something I found incredibly confusing
 when I first started (literally to the point where I abandoned
 some projects early on because I didn't know how to decode some
@@ -381,6 +386,6 @@ scarier JSON).
 
 **So let's see some in action** with some real JSON HTTP
 requests because people want to know how to work with Tasks and
-Cmds as well—see 
+Cmds as well—see
 [Pokémon Viewer demo](https://codepen.io/toastal/pen/kXAKPk)
 [`PokemonViewer.elm`](https://github.com/toastal/elm-applicatives-and-json-decoders/blob/master/demo/PokemonViewer.elm).
