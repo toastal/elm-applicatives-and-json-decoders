@@ -365,12 +365,12 @@ stylez =
     .pokemon-list { will-change: contents; display: flex; flex-flow: row wrap; list-style: none; margin: 1px 0 0 1px; padding: 0; font-size: 1.3em }
     .pokemon-list-item { display: flex; justify-content: center; align-content: center; position: relative; will-change: opacity; min-width: 13em; min-height: 13em; padding: 1.5em; margin-left: -1px; margin-top: -1px; border: 1px solid hsl(190, 80%, 28%); transition: border-color 300ms ease-out; animation: fadein 450ms ease-out 0s normal 1 both }
     .pokemon-list-item:hover { z-index: 1; border-color: hsl(190, 80%, 48%) }
-    .pokemon-stat-bar { will-change: opacity, width; overflow: hidden; height: 1.1em; min-width: 5%; padding: 0 0.25em; background-color: hsl(190, 80%, 30%); font-size: 0.7em; line-height: 1.3; color: hsla(0, 0%, 0%, 0.34); text-transform: uppercase; white-space: nowrap; cursor: help; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; animation: barin 350ms ease-in 280ms normal 1 both }
+    .pokemon-stat-bar { will-change: opacity, width; overflow: hidden; height: 1.1em; min-width: 5%; padding: 0 0.25em; background-color: hsl(190, 80%, 30%); font-size: 0.7em; line-height: 1.3; color: hsla(0, 0%, 0%, 0.34); text-transform: uppercase; white-space: nowrap; cursor: help; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; animation: barin 350ms ease-in 275ms normal 1 both }
     .pokemon-stat-bar:nth-child(2) { animation-delay: 300ms }
-    .pokemon-stat-bar:nth-child(3) { animation-delay: 320ms }
-    .pokemon-stat-bar:nth-child(4) { animation-delay: 340ms }
-    .pokemon-stat-bar:nth-child(5) { animation-delay: 360ms }
-    .pokemon-stat-bar:nth-child(6) { animation-delay: 380ms }
+    .pokemon-stat-bar:nth-child(3) { animation-delay: 325ms }
+    .pokemon-stat-bar:nth-child(4) { animation-delay: 350ms }
+    .pokemon-stat-bar:nth-child(5) { animation-delay: 375ms }
+    .pokemon-stat-bar:nth-child(6) { animation-delay: 400ms }
     @keyframes fadein { 0% { opacity: 0 } 100% { opacity: 1 } }
     @keyframes barin { 0% { opacity: 0; width: 5% } 30% { opacity: 1 } 100% { width: 100% } }
     .more-footer { padding: 0.5em 1em; text-align: center }
