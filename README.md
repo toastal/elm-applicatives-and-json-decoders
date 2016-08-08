@@ -204,7 +204,7 @@ foo' x y =
     x * y
 
 
--- partially in a 1
+-- partially apply in a 1
 foo'' : number -> number
 foo'' =
     foo' 1
