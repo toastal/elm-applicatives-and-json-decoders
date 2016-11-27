@@ -1,5 +1,5 @@
 {
-    "version": "0.0.1",
+    "version": "1.0.0",
     "summary": "Elm Applicatives and Json Decoders",
     "repository": "https://github.com/toastal/elm-applicatives-and-json-decoders.git",
     "license": "BSD3",
