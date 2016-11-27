@@ -1,15 +1,15 @@
 module PokemonViewer exposing (..)
 
 import Dict exposing (Dict)
-import Html exposing (Html, button, div, a, dd, dl, dt, footer, h1, img, li, node, text)
-import Html.App exposing (program)
-import Html.Attributes as Attr exposing (alt, class, href, rel, src, style, target, title, type')
+import Html exposing (Html, abbr, button, div, a, dd, dl, dt, footer, h1, img, li, node, text)
+import Html.Attributes as Attr exposing (alt, class, href, rel, src, style, target, title, type_)
 import Html.Events exposing (onClick)
 import Html.Keyed
-import Http
-import Json.Decode as Decode exposing (Decoder, (:=))
+import Http exposing (Request)
+import Json.Decode as Decode exposing (Decoder)
 import Json.Decode.Extra as Decode exposing ((|:))
 import List.Extra as List
+import Result.Extra as Result
 import String
 import String.Extra as String
 import Task exposing (Task)
@@ -32,8 +32,8 @@ type alias Pokemon =
 
 {-| Using an Applicative-style Json.Decoder provided by Json.Decoder.Extra
 as it scales infinitely, regardless of the size of the record trying that is
-trying to be decoded... well, that and the point of this demo is to
-demonstate Applicatives and the Json.Decoder.
+trying to be decoded... We may not need a number outside `map8` but that is
+the point of this demo -- to demonstate Applicatives + Json Decoding.
 
 Relevant JSON:
 
@@ -120,22 +120,29 @@ Relevant JSON:
 -}
 pokemonDecoder : Decoder Pokemon
 pokemonDecoder =
+    -- using Pokemon as a constructor to apply our 5 fields to
     Decode.succeed Pokemon
-        |: ("id" := Decode.int)
-        |: ("name" := Decode.string)
+        |: Decode.field "id" Decode.int
+        |: Decode.field "name" Decode.string
         |: (Decode.at [ "sprites", "front_default" ] Decode.string
-                |> Decode.map (String.split "http:" >> List.last >> Maybe.withDefault "")
+                -- Mapping to remove the protocol
+                |>
+                    Decode.map
+                        (String.split "http:" >> List.last >> Maybe.withDefault "")
            )
-        |: ("stats"
-                := (Decode.list
-                        (Decode.succeed (,)
-                            |: (Decode.at [ "stat", "name" ] Decode.string)
-                            |: ("base_stat" := Decode.int)
-                        )
-                        |> Decode.map Dict.fromList
-                   )
-           )
-        |: ("types" := (Decode.list <| Decode.at [ "type", "name" ] Decode.string))
+        |: Decode.field "stats"
+            (Decode.list
+                -- Applying into a tuple constructor
+                (Decode.succeed (,)
+                    |: Decode.at [ "stat", "name" ] Decode.string
+                    |: Decode.field "base_stat" Decode.int
+                )
+                -- Mapping our tuple list into a Dict
+                |>
+                    Decode.map Dict.fromList
+            )
+        |: Decode.field "types"
+            (Decode.list <| Decode.at [ "type", "name" ] Decode.string)
 
 
 
@@ -154,8 +161,7 @@ type alias Model =
 
 type Msg
     = FetchMore Int
-    | FetchPokemonFail Http.Error
-    | FetchPokemonSucceed Pokemon
+    | FetchPokemon (Result Http.Error Pokemon)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -166,37 +172,38 @@ update msg model =
             , getPokemonsBetween (model.offset + 1) (model.offset + m)
             )
 
-        FetchPokemonSucceed pkmn ->
-            ( { model | pokemon = List.sortBy .id <| model.pokemon ++ [ pkmn ] }
-            , Cmd.none
-            )
-
         -- Swallowing error, because this is just a demo
-        FetchPokemonFail _ ->
-            ( model, Cmd.none )
+        FetchPokemon rpkmn ->
+            Result.unpack (always ( model, Cmd.none ))
+                (\pkmn ->
+                    ( { model | pokemon = List.sortBy .id <| model.pokemon ++ [ pkmn ] }
+                    , Cmd.none
+                    )
+                )
+                rpkmn
 
 
 
 -- REQUESTS
 
 
-{-| Given an id, build a Task for the JSON GET
+{-| Given an id, build a Request for the JSON GET
 -}
-getPokemon : Int -> Task Http.Error Pokemon
+getPokemon : Int -> Request Pokemon
 getPokemon id =
-    Http.get pokemonDecoder
-        <| String.join "" [ "https://pokeapi.co/api/v2/pokemon/", toString id, "/" ]
+    Http.get ("https://pokeapi.co/api/v2/pokemon/" ++ toString id ++ "/")
+        pokemonDecoder
 
 
 {-| Builds a list from the first Pokémon, Bulbasaur, to the specified limit.
-The list is reversed because the Tasks get queued in the opposite order and
-in Elm, we can't do [limit..1] :\
+The list is reversed because the Requests get queued in the opposite order and
+in Elm, we can't do List.range  with descending :\
 -}
 getPokemonsBetween : Int -> Int -> Cmd Msg
 getPokemonsBetween offset limit =
-    [offset..limit]
-        |> List.map (getPokemon >> Task.perform FetchPokemonFail FetchPokemonSucceed)
+    List.range offset limit
         |> List.reverse
+        |> List.map (getPokemon >> Http.send FetchPokemon)
         |> Cmd.batch
 
 
@@ -217,6 +224,8 @@ statsWithMax =
     ]
 
 
+{-| Could be more efficient by memoizing label
+-}
 viewStatBar : ( String, Float, Int ) -> Html Msg
 viewStatBar ( key, max, val ) =
     let
@@ -224,7 +233,7 @@ viewStatBar ( key, max, val ) =
         label =
             String.split "-" key
                 |> List.map
-                    (String.capitalize True
+                    (String.toTitleCase
                         >> (\s ->
                                 if s == "Special" then
                                     "Sp."
@@ -254,13 +263,13 @@ viewStatBar ( key, max, val ) =
 viewPokemon : Pokemon -> ( String, Html Msg )
 viewPokemon { id, name, sprite, stats, types } =
     let
-        id' : String
-        id' =
+        id_ : String
+        id_ =
             toString id
 
-        name' : String
-        name' =
-            String.capitalize True name
+        name_ : String
+        name_ =
+            String.toTitleCase name
 
         getStat : String -> Int
         getStat =
@@ -270,29 +279,32 @@ viewPokemon { id, name, sprite, stats, types } =
         makeBarData ( key, max ) =
             ( key, max, getStat key )
     in
-        ( id'
+        ( id_
         , li [ class "pokemon-list-item" ]
             [ dl []
-                [ dt [] [ text "ID" ]
-                , dd [] [ text <| String.padLeft 3 '0' id' ]
+                [ dt []
+                    [ abbr [ title "National Pokédex identification number" ]
+                        [ text "ID" ]
+                    ]
+                , dd [] [ text <| String.padLeft 3 '0' id_ ]
                 , dt [] [ text "Name" ]
-                , dd [] [ text name' ]
+                , dd [] [ text name_ ]
                 , dt [ style [ ( "display", "none" ) ] ] [ text "Sprite" ]
                 , dd []
-                    [ img [ src sprite, alt ("Sprite of " ++ name'), title name' ] []
+                    [ img [ src sprite, alt ("Sprite of " ++ name_), title name_ ] []
                     ]
                 , dt []
-                    [ text
-                        <| if List.length types < 2 then
+                    [ text <|
+                        if List.length types < 2 then
                             "Type"
-                           else
+                        else
                             "Types"
                     ]
                 , dd []
-                    [ text << String.join ", " <| List.map (String.capitalize True) types ]
+                    [ text << String.join ", " <| List.map String.toTitleCase types ]
                 , dt [] [ text "Stats" ]
-                , dd []
-                    <| List.map (makeBarData >> viewStatBar) statsWithMax
+                , dd [] <|
+                    List.map (makeBarData >> viewStatBar) statsWithMax
                 ]
             ]
         )
@@ -322,21 +334,19 @@ view { pokemon } =
                 [ text "Source Code" ]
             ]
         , node "style"
-            [ type' "text/css" ]
+            [ type_ "text/css" ]
             [ text stylez ]
-        , case pokemon of
-            [] ->
-                div [ class "loader" ] []
-
-            _ ->
-                div []
-                    [ Html.Keyed.ol [ class "pokemon-list" ]
-                        <| List.map viewPokemon pokemon
-                    , footer [ class "more-footer" ]
-                        [ button [ type' "button", onClick <| FetchMore 12 ]
-                            [ text "Fetch 12 More Pokémon" ]
-                        ]
+        , if List.isEmpty pokemon then
+            div [ class "loader" ] []
+          else
+            div []
+                [ Html.Keyed.ol [ class "pokemon-list" ] <|
+                    List.map viewPokemon pokemon
+                , footer [ class "more-footer" ]
+                    [ button [ type_ "button", onClick <| FetchMore 12 ]
+                        [ text "Fetch 12 More Pokémon" ]
                     ]
+                ]
         ]
 
 
@@ -360,6 +370,7 @@ stylez =
     dl dd::after { content: "\\A" }
     button { -webkit-appearance: none; -moz-appearance: none; appearance: none; border: 2px solid hsl(190, 80%, 60%); background: transparent; color: hsl(190, 80%, 60%); font-family: inherit; font-size: 16px; cursor: pointer; transition-property: border-color, background-color, color; transition-duration: 300ms; transition-timing-function: ease-out }
     button:hover, button:focus { background-color: hsl(190, 80%, 60%); color: #111 }
+    button:focus, button:-moz-focusring { outline: none }
     button:active { background-color: #fff; border-color: #fff }
     .container { display: flex; flex-flow: column nowrap; justify-content: center; padding: 1.2em }
     .pokemon-list { will-change: contents; display: flex; flex-flow: row wrap; list-style: none; margin: 1px 0 0 1px; padding: 0; font-size: 1.3em }
@@ -382,15 +393,15 @@ stylez =
 -- MAIN
 
 
-offset' : Int
-offset' =
+offset_ : Int
+offset_ =
     24
 
 
-main : Program Never
+main : Program Never Model Msg
 main =
-    program
-        { init = ( Model offset' [], getPokemonsBetween 1 offset' )
+    Html.program
+        { init = ( Model offset_ [], getPokemonsBetween 1 offset_ )
         , view = view
         , update = update
         , subscriptions = always Sub.none
