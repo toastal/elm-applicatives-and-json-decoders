@@ -14,7 +14,7 @@ Which takes in Applicative (because of polymorphism)--not just Maybe
 infixl 2 <*>
 (<*>) : Maybe (a -> b) -> Maybe a -> Maybe b
 (<*>) =
-    Maybe.andMap
+    flip Maybe.andMap
 
 
 {-| define the pure/singleton for the our applicative, Maybe
