@@ -1,7 +1,7 @@
 module JsonDecodeApplicative exposing (..)
 
 import Html exposing (Html, text)
-import Json.Decode as Decode exposing (Decoder, (:=))
+import Json.Decode as Decode exposing (Decoder)
 import Json.Decode.Extra as Decode exposing ((|:))
 
 
@@ -35,8 +35,8 @@ type alias CoolItem =
 coolItemDecoder : Decoder CoolItem
 coolItemDecoder =
     Decode.succeed CoolItem
-        |: ("foo" := Decode.int)
-        |: ("bar" := Decode.bool)
+        |: Decode.field "foo" Decode.int
+        |: Decode.field "bar" Decode.bool
 
 
 view : a -> Html String
