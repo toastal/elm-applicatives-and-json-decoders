@@ -40,8 +40,7 @@ initOffset =
 main : Program Never Model Msg
 main =
     Html.program
-        { init =
-            ( Model initOffset [], getPokemonsBetween 1 initOffset )
+        { init = ( Model initOffset [], getPokemonsBetween 1 initOffset )
         , view = view
         , update = update
         , subscriptions = always Sub.none
@@ -324,20 +323,17 @@ viewPokemon { id, name, sprite, stats, types } =
         , li [ class "pokemon-list-item" ]
             [ dl []
                 [ dt []
-                    [ abbr
-                        [ title "National Pokédex identification number"
-                        ]
+                    [ abbr [ title "National Pokédex identification number" ]
                         [ text "ID" ]
                     ]
                 , dd [] [ text <| String.padLeft 3 '0' id_ ]
                 , dt [] [ text "Name" ]
                 , dd [] [ text name_ ]
-                , dt [ style [ ( "display", "none" ) ] ]
-                    [ text "Sprite" ]
+                , dt [ style [ ( "display", "none" ) ] ] [ text "Sprite" ]
                 , dd []
                     [ img
                         [ src sprite
-                        , alt ("Sprite of " ++ name_)
+                        , alt <| "Sprite of " ++ name_
                         , title name_
                         ]
                         []
@@ -356,8 +352,7 @@ viewPokemon { id, name, sprite, stats, types } =
                         List.map String.toTitleCase types
                     ]
                 , dt [] [ text "Stats" ]
-                , dd [] <|
-                    List.map (makeBarData >> viewStatBar) statsWithMax
+                , dd [] <| List.map (makeBarData >> viewStatBar) statsWithMax
                 ]
             ]
         )
@@ -378,10 +373,7 @@ view { pokemon } =
             , rel "stylesheet"
             ]
             []
-        , h1
-            [ style
-                [ ( "textAlign", "center" ), ( "marginTop", "0" ) ]
-            ]
+        , h1 [ style [ ( "textAlign", "center" ), ( "marginTop", "0" ) ] ]
             [ text "Applicative-Style Elm JSON Decoding - "
             , a
                 [ href "https://github.com/toastal/elm-applicatives-and-json-decoders/blob/master/demo/PokemonViewer.elm"
@@ -389,9 +381,7 @@ view { pokemon } =
                 ]
                 [ text "Source Code" ]
             ]
-        , node "style"
-            [ type_ "text/css" ]
-            [ text stylez ]
+        , node "style" [ type_ "text/css" ] [ text stylez ]
         , if List.isEmpty pokemon then
             div [ class "loader" ] []
           else
@@ -399,8 +389,7 @@ view { pokemon } =
                 [ Html.Keyed.ol [ class "pokemon-list" ] <|
                     List.map viewPokemon pokemon
                 , footer [ class "more-footer" ]
-                    [ button
-                        [ type_ "button", onClick <| FetchMore 12 ]
+                    [ button [ type_ "button", onClick <| FetchMore 12 ]
                         [ text "Fetch 12 More Pokémon" ]
                     ]
                 ]
