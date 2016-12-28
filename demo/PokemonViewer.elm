@@ -1,5 +1,18 @@
 module PokemonViewer exposing (..)
 
+{-
+   Culminating demo for my blog post, "Elm Applicatives & Json
+   Decoders: Mapping & Applying Our Way to Deserialization Victory",
+   explaining how Elm's `Json.Decode.Decoder` is an applicative
+   functor. This example renders Pokémon (its ID, name, picture, and
+   stats) from a public API. This is an entire Elm application--with
+   model, update, and view.
+
+   https://toast.al/posts/2016-08-12-elm-applicatives-and-json-decoders.html
+
+   Running example: https://codepen.io/toastal/pen/kXAKPk
+-}
+
 import Dict exposing (Dict)
 import Html exposing (Html, abbr, button, div, a, dd, dl, dt, footer, h1, img, li, node, text)
 import Html.Attributes as Attr exposing (alt, class, href, rel, src, style, target, title, type_)
@@ -9,17 +22,38 @@ import Http exposing (Request)
 import Json.Decode as Decode exposing (Decoder)
 import Json.Decode.Extra as Decode exposing ((|:))
 import List.Extra as List
+import Regex
 import Result.Extra as Result
 import String
 import String.Extra as String
 import Task exposing (Task)
 
 
+-- MAIN
+
+
+initOffset : Int
+initOffset =
+    24
+
+
+main : Program Never Model Msg
+main =
+    Html.program
+        { init =
+            ( Model initOffset [], getPokemonsBetween 1 initOffset )
+        , view = view
+        , update = update
+        , subscriptions = always Sub.none
+        }
+
+
+
 -- TYPES
 
 
-{-| Though the API provides much, much more data, these are the only fields
-we're going to look at for the demo.
+{-| Though the API provides much, much more data, these are the only
+fields we're going to look at for the demo.
 -}
 type alias Pokemon =
     { id : Int
@@ -30,12 +64,13 @@ type alias Pokemon =
     }
 
 
-{-| Using an Applicative-style Json.Decoder provided by Json.Decoder.Extra
-as it scales infinitely, regardless of the size of the record trying that is
-trying to be decoded... We may not need a number outside `map8` but that is
-the point of this demo -- to demonstate Applicatives + Json Decoding.
+{-| Using an Applicative-style Json.Decoder provided by
+`Json.Decoder.Extra` as it scales infinitely, regardless of the size
+of the record trying that is trying to be decoded... We may not need
+a number outside `map8` but that is the point of this demo -- to
+demonstate Applicatives + Json Decoding.
 
-Relevant JSON:
+Relevant sample JSON:
 
     {
       "stats":[
@@ -128,7 +163,10 @@ pokemonDecoder =
                 -- Mapping to remove the protocol
                 |>
                     Decode.map
-                        (String.split "http:" >> List.last >> Maybe.withDefault "")
+                        (Regex.replace (Regex.AtMost 1)
+                            (Regex.regex "^http(s)?:")
+                            (always "")
+                        )
            )
         |: Decode.field "stats"
             (Decode.list
@@ -176,7 +214,9 @@ update msg model =
         FetchPokemon rpkmn ->
             Result.unpack (always ( model, Cmd.none ))
                 (\pkmn ->
-                    ( { model | pokemon = List.sortBy .id <| model.pokemon ++ [ pkmn ] }
+                    ( { model
+                        | pokemon = List.sortBy .id <| model.pokemon ++ [ pkmn ]
+                      }
                     , Cmd.none
                     )
                 )
@@ -195,9 +235,9 @@ getPokemon id =
         pokemonDecoder
 
 
-{-| Builds a list from the first Pokémon, Bulbasaur, to the specified limit.
-The list is reversed because the Requests get queued in the opposite order and
-in Elm, we can't do List.range  with descending :\
+{-| Builds a list from the first Pokémon, Bulbasaur, to the specified
+limit.  The list is reversed because the Requests get queued in the
+opposite order and in Elm, we can't do List.range with descending :\
 -}
 getPokemonsBetween : Int -> Int -> Cmd Msg
 getPokemonsBetween offset limit =
@@ -224,7 +264,9 @@ statsWithMax =
     ]
 
 
-{-| Could be more efficient by memoizing label
+{-| Could be more efficient by memoizing label since we know that the
+same strings will be passing through, but that would add complexity
+to this simple example
 -}
 viewStatBar : ( String, Float, Int ) -> Html Msg
 viewStatBar ( key, max, val ) =
@@ -232,27 +274,26 @@ viewStatBar ( key, max, val ) =
         label : String
         label =
             String.split "-" key
-                |> List.map
-                    (String.toTitleCase
-                        >> (\s ->
-                                if s == "Special" then
-                                    "Sp."
-                                else
-                                    s
-                           )
-                    )
+                |> List.map String.toTitleCase
                 |> String.join " "
+                |> Regex.replace (Regex.AtMost 1)
+                    (Regex.regex "^Special")
+                    (always "Sp.")
 
         perc : Float
         perc =
             toFloat val / max
+
+        bgColor : String
+        bgColor =
+            "hsl(190, 80%, " ++ toString ((70 * perc) + 30) ++ "%)"
     in
         div
             [ title <| label ++ ": " ++ toString val
             , class "pokemon-stat-bar"
             , style
                 [ ( "max-width", toString ((95 * perc) + 5) ++ "%" )
-                , ( "backgroundColor", "hsl(190, 80%, " ++ toString ((70 * perc) + 30) ++ "%)" )
+                , ( "backgroundColor", bgColor )
                 ]
             ]
             [ text label ]
@@ -283,15 +324,23 @@ viewPokemon { id, name, sprite, stats, types } =
         , li [ class "pokemon-list-item" ]
             [ dl []
                 [ dt []
-                    [ abbr [ title "National Pokédex identification number" ]
+                    [ abbr
+                        [ title "National Pokédex identification number"
+                        ]
                         [ text "ID" ]
                     ]
                 , dd [] [ text <| String.padLeft 3 '0' id_ ]
                 , dt [] [ text "Name" ]
                 , dd [] [ text name_ ]
-                , dt [ style [ ( "display", "none" ) ] ] [ text "Sprite" ]
+                , dt [ style [ ( "display", "none" ) ] ]
+                    [ text "Sprite" ]
                 , dd []
-                    [ img [ src sprite, alt ("Sprite of " ++ name_), title name_ ] []
+                    [ img
+                        [ src sprite
+                        , alt ("Sprite of " ++ name_)
+                        , title name_
+                        ]
+                        []
                     ]
                 , dt []
                     [ text <|
@@ -301,7 +350,11 @@ viewPokemon { id, name, sprite, stats, types } =
                             "Types"
                     ]
                 , dd []
-                    [ text << String.join ", " <| List.map String.toTitleCase types ]
+                    [ text
+                        << String.join ", "
+                      <|
+                        List.map String.toTitleCase types
+                    ]
                 , dt [] [ text "Stats" ]
                 , dd [] <|
                     List.map (makeBarData >> viewStatBar) statsWithMax
@@ -310,12 +363,12 @@ viewPokemon { id, name, sprite, stats, types } =
         )
 
 
-{-| We're going to start with a container <div> that will give us a place
-to add a <link> for the Google Font, as well as a <style> element with, as
-well as the Keyed <ol> for the list of Pokémon. A case statement is going
-to check for the empty list and render a loading indicator for until at
-least one element is in the list. The API itself is a little slow so this
-works well enough.
+{-| We're going to start with a container <div> that will give us a
+place to add a <link> for the Google Font, as well as a <style>
+element with, as well as the Keyed <ol> for the list of Pokémon. A
+case statement is going to check for the empty list and render a
+loading indicator for until at least one element is in the list. The
+API itself is a little slow so this works well enough.
 -}
 view : Model -> Html Msg
 view { pokemon } =
@@ -325,7 +378,10 @@ view { pokemon } =
             , rel "stylesheet"
             ]
             []
-        , h1 [ style [ ( "textAlign", "center" ), ( "marginTop", "0" ) ] ]
+        , h1
+            [ style
+                [ ( "textAlign", "center" ), ( "marginTop", "0" ) ]
+            ]
             [ text "Applicative-Style Elm JSON Decoding - "
             , a
                 [ href "https://github.com/toastal/elm-applicatives-and-json-decoders/blob/master/demo/PokemonViewer.elm"
@@ -343,7 +399,8 @@ view { pokemon } =
                 [ Html.Keyed.ol [ class "pokemon-list" ] <|
                     List.map viewPokemon pokemon
                 , footer [ class "more-footer" ]
-                    [ button [ type_ "button", onClick <| FetchMore 12 ]
+                    [ button
+                        [ type_ "button", onClick <| FetchMore 12 ]
                         [ text "Fetch 12 More Pokémon" ]
                     ]
                 ]
@@ -354,7 +411,7 @@ view { pokemon } =
 -- STYLES
 
 
-{-| In leiu of a real stylesheet, a string is good enough for a demo
+{-| In leiu of a real stylesheet, a string is good enough for a demo.
 -}
 stylez : String
 stylez =
@@ -387,22 +444,3 @@ stylez =
     .more-footer { padding: 0.5em 1em; text-align: center }
     .loader { position: absolute; z-index: 10; top: 0; bottom: 0; left: 0; right: 0; margin: auto; height: 16vmin; width: 16vmin; min-height: 12px; min-width: 12px; max-width: 110px; max-height: 110px; background-repeat: no-repeat; background-position: 50% 50%; background-size: contain; background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHdpZHRoPSIxMjBweCIgaGVpZ2h0PSIxMjBweCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQiIGNsYXNzPSJ1aWwtc3F1YXJlcyI+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9Im5vbmUiIGNsYXNzPSJiayI+PC9yZWN0PjxyZWN0IHg9IjE1IiB5PSIxNSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjMGY3NTg5IiBjbGFzcz0ic3EiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9ImZpbGwiIGZyb209IiMwZjc1ODkiIHRvPSIjNDdjZmVhIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgZHVyPSIxcyIgYmVnaW49IjAuMHMiIHZhbHVlcz0iIzQ3Y2ZlYTsjNDdjZmVhOyMwZjc1ODk7IzBmNzU4OSIga2V5VGltZXM9IjA7MC4xOzAuMjsxIj48L2FuaW1hdGU+PC9yZWN0PjxyZWN0IHg9IjQwIiB5PSIxNSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjMGY3NTg5IiBjbGFzcz0ic3EiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9ImZpbGwiIGZyb209IiMwZjc1ODkiIHRvPSIjNDdjZmVhIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgZHVyPSIxcyIgYmVnaW49IjAuMTI1cyIgdmFsdWVzPSIjNDdjZmVhOyM0N2NmZWE7IzBmNzU4OTsjMGY3NTg5IiBrZXlUaW1lcz0iMDswLjE7MC4yOzEiPjwvYW5pbWF0ZT48L3JlY3Q+PHJlY3QgeD0iNjUiIHk9IjE1IiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9IiMwZjc1ODkiIGNsYXNzPSJzcSI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbCIgZnJvbT0iIzBmNzU4OSIgdG89IiM0N2NmZWEiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiBkdXI9IjFzIiBiZWdpbj0iMC4yNXMiIHZhbHVlcz0iIzQ3Y2ZlYTsjNDdjZmVhOyMwZjc1ODk7IzBmNzU4OSIga2V5VGltZXM9IjA7MC4xOzAuMjsxIj48L2FuaW1hdGU+PC9yZWN0PjxyZWN0IHg9IjE1IiB5PSI0MCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjMGY3NTg5IiBjbGFzcz0ic3EiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9ImZpbGwiIGZyb209IiMwZjc1ODkiIHRvPSIjNDdjZmVhIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgZHVyPSIxcyIgYmVnaW49IjAuODc1cyIgdmFsdWVzPSIjNDdjZmVhOyM0N2NmZWE7IzBmNzU4OTsjMGY3NTg5IiBrZXlUaW1lcz0iMDswLjE7MC4yOzEiPjwvYW5pbWF0ZT48L3JlY3Q+PHJlY3QgeD0iNjUiIHk9IjQwIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9IiMwZjc1ODkiIGNsYXNzPSJzcSI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbCIgZnJvbT0iIzBmNzU4OSIgdG89IiM0N2NmZWEiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiBkdXI9IjFzIiBiZWdpbj0iMC4zNzUiIHZhbHVlcz0iIzQ3Y2ZlYTsjNDdjZmVhOyMwZjc1ODk7IzBmNzU4OSIga2V5VGltZXM9IjA7MC4xOzAuMjsxIj48L2FuaW1hdGU+PC9yZWN0PjxyZWN0IHg9IjE1IiB5PSI2NSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjMGY3NTg5IiBjbGFzcz0ic3EiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9ImZpbGwiIGZyb209IiMwZjc1ODkiIHRvPSIjNDdjZmVhIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgZHVyPSIxcyIgYmVnaW49IjAuNzVzIiB2YWx1ZXM9IiM0N2NmZWE7IzQ3Y2ZlYTsjMGY3NTg5OyMwZjc1ODkiIGtleVRpbWVzPSIwOzAuMTswLjI7MSI+PC9hbmltYXRlPjwvcmVjdD48cmVjdCB4PSI0MCIgeT0iNjUiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0iIzBmNzU4OSIgY2xhc3M9InNxIj48YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJmaWxsIiBmcm9tPSIjMGY3NTg5IiB0bz0iIzQ3Y2ZlYSIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIGR1cj0iMXMiIGJlZ2luPSIwLjYyNXMiIHZhbHVlcz0iIzQ3Y2ZlYTsjNDdjZmVhOyMwZjc1ODk7IzBmNzU4OSIga2V5VGltZXM9IjA7MC4xOzAuMjsxIj48L2FuaW1hdGU+PC9yZWN0PjxyZWN0IHg9IjY1IiB5PSI2NSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjMGY3NTg5IiBjbGFzcz0ic3EiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9ImZpbGwiIGZyb209IiMwZjc1ODkiIHRvPSIjNDdjZmVhIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgZHVyPSIxcyIgYmVnaW49IjAuNXMiIHZhbHVlcz0iIzQ3Y2ZlYTsjNDdjZmVhOyMwZjc1ODk7IzBmNzU4OSIga2V5VGltZXM9IjA7MC4xOzAuMjsxIj48L2FuaW1hdGU+PC9yZWN0Pjwvc3ZnPg==')}
     """
-
-
-
--- MAIN
-
-
-offset_ : Int
-offset_ =
-    24
-
-
-main : Program Never Model Msg
-main =
-    Html.program
-        { init = ( Model offset_ [], getPokemonsBetween 1 offset_ )
-        , view = view
-        , update = update
-        , subscriptions = always Sub.none
-        }
