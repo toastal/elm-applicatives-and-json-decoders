@@ -11,8 +11,8 @@
     "type": "git",
     "url": "git+https://github.com/toastal/elm-applicatives-and-json-decoders.git"
   },
-  "author": "younity",
-  "license": "ISC",
+  "author": "toastal",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/toastal/elm-applicatives-and-json-decoders/issues"
   },
